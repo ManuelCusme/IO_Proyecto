@@ -27,3 +27,9 @@
 - Regiones infinitas con óptimo finito, segmentos y semirrectas óptimas.
 - Recorte solo visual y orden antihorario de vértices.
 - Puerta: 360 tests; Wyndor con origen y cruce aleatorio 2D; black y ruff correctos.
+
+## Fase 3 — Parser y ejemplos
+
+- Regex y Fraction para expresiones a ambos lados, formatos alternativos y comentarios.
+- Mensajes de sintaxis en español, leyenda de variables y siete ejemplos precargados.
+- Puerta: 383 tests; ejemplos parseados y resueltos; black y ruff correctos.
