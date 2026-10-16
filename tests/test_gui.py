@@ -16,6 +16,7 @@ def test_ventana_ejemplos(qapp: QApplication, monkeypatch) -> None:
     monkeypatch.setattr(QMessageBox, "warning", lambda *args: errores.append(args))
     w = MainWindow()
     w.show()
+    assert qapp.font().family() == "DejaVu Sans"
     for texto in EJEMPLOS.values():
         p = parsear_problema(texto)
         w.panel.cargar_problema(p)

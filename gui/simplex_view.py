@@ -3,6 +3,7 @@
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QAbstractItemView,
+    QHeaderView,
     QLabel,
     QListWidget,
     QTableWidget,
@@ -84,7 +85,11 @@ class SimplexView(QWidget):
                         item.setToolTip(f"Elemento pivote: {paso.elemento_pivote}")
                 item.setBackground(QColor(color))
                 self.tabla.setItem(i, j, item)
-        self.tabla.resizeColumnsToContents()
+        self.tabla.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+            if len(encabezados) <= 12
+            else QHeaderView.ResizeMode.ResizeToContents
+        )
         self.operaciones.clear()
         self.operaciones.addItems(
             paso.operaciones or ["No se requieren más operaciones."]

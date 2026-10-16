@@ -127,6 +127,11 @@ class ProblemPanel(QWidget):
         self.tabla.setRowCount(0)
         self.tabla.setColumnCount(n + 3)
         self.tabla.setHorizontalHeaderLabels(self.nombres + ["≤ / ≥ / =", "RHS", "−"])
+        for j in range(n):
+            self.tabla.setColumnWidth(j, 70)
+        self.tabla.setColumnWidth(n, 85)
+        self.tabla.setColumnWidth(n + 1, 70)
+        self.tabla.setColumnWidth(n + 2, 36)
         self.agregar_restriccion()
 
     def _cambiar_dimension(self, n: int) -> None:

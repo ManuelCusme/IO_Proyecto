@@ -36,6 +36,7 @@ from gui.graphic_view import GraphicView
 from gui.problem_panel import ProblemPanel
 from gui.resultado_panel import ResultadoPanel
 from gui.simplex_view import SimplexView
+from utils.typography import configurar_tipografia
 
 
 class _Edicion(QUndoCommand):
@@ -61,6 +62,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self) -> None:
         super().__init__()
+        configurar_tipografia()
         self.setWindowTitle("SimplexLab")
         self.setMinimumSize(1200, 800)
         self._oscuro(False)
@@ -309,6 +311,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(lista)
 
         def elegir(item: object) -> None:
+            """Carga el ejemplo seleccionado y cierra la lista."""
             self.panel.cargar_problema(parsear_problema(EJEMPLOS[item.text()]))
             dialogo.accept()
 

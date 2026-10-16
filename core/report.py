@@ -130,11 +130,15 @@ def exportar_pdf(
 
     if QGuiApplication.instance() is None:
         raise ValueError("La exportación PDF requiere una aplicación Qt activa.")
+    from utils.typography import configurar_tipografia
+
+    configurar_tipografia()
     impresora = QPrinter(QPrinterInfo(), QPrinter.PrinterMode.HighResolution)
     impresora.setOutputFormat(QPrinter.OutputFormat.PdfFormat)
     impresora.setOutputFileName(str(ruta))
     impresora.setPageSize(QPageSize(QPageSize.PageSizeId.A4))
     documento = QTextDocument()
+    documento.setDefaultFont(QGuiApplication.font())
     documento.setHtml(construir_html(problema, resultado, imagen_grafico, metodo))
     documento.print_(impresora)
     if not ruta.is_file() or ruta.stat().st_size == 0:
