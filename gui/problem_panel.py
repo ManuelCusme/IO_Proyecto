@@ -122,7 +122,9 @@ class ProblemPanel(QWidget):
             self.coeficientes.append(campo)
             self.objetivo_layout.addWidget(campo, 1 + i // 3, (i % 3) * 2)
             self.objetivo_layout.addWidget(
-                QLabel(self.nombres[i]), 1 + i // 3, (i % 3) * 2 + 1
+                QLabel(self.nombres[i] + (" +" if i < n - 1 else "")),
+                1 + i // 3,
+                (i % 3) * 2 + 1,
             )
         self.tabla.setRowCount(0)
         self.tabla.setColumnCount(n + 3)
