@@ -115,3 +115,18 @@ def test_limite(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("core.simplex_solver.MAX_ITER", 0)
     with pytest.raises(ErrorInterno, match="límite"):
         resolver_simplex(CASOS[0][0])
+
+
+@pytest.mark.parametrize(
+    "p",
+    [
+        Problema("max", [1, 0], [R([1, 0], "<=", 0), R([0, 1], "<=", 0)]),
+        Problema("max", [0, 0], [R([1, 1], "<=", 0)]),
+    ],
+)
+def test_degenerado_unico_con_costo_cero(p: Problema) -> None:
+    """Un costo reducido nulo no crea otro punto cuando todas las razones son cero."""
+    r = resolver_simplex(p)
+    assert referencia_scipy(p).status == 0
+    assert vertices_independientes(p) == [(0, 0)]
+    assert r.estado == "optimo" and r.degenerado and r.z == 0

@@ -4,6 +4,7 @@ from fractions import Fraction
 
 from core.casos_especiales import (
     aplicar_bland,
+    confirmar_multiple,
     detectar_empate_razon,
     detectar_multiple,
     detectar_no_acotado,
@@ -181,7 +182,9 @@ def resolver_simplex(problema: Problema) -> ResultadoSimplex:
                 degenerado = True
             if fila_z[-1].m:
                 raise ErrorInterno("El valor factible de Z conserva una componente M.")
-            if detectar_multiple(fila_z, nombres + ["b"], base):
+            if detectar_multiple(fila_z, nombres + ["b"], base) and confirmar_multiple(
+                tabla, fila_z, nombres + ["b"], base
+            ):
                 estado = "multiple"
                 avisos.append("Existen infinitas soluciones óptimas")
             for i, holgura in restricciones_no_activas(problema, solucion):

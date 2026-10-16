@@ -34,6 +34,7 @@ def test_aleatorios(p: Problema) -> None:
     """Contrasta geometría independiente con Simplex en todos los casos 2D."""
     r, s = resolver_grafico(p), resolver_simplex(p)
     assert r.z_optimo == s.z
+    assert r.estado == s.estado
     assert (r.estado in ("optimo", "multiple")) == (s.estado in ("optimo", "multiple"))
     if s.z is None:
         assert r.estado == s.estado

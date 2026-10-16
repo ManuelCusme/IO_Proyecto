@@ -53,3 +53,54 @@ def restricciones_no_activas(
         if r.tipo != "=" and diferencia > 0:
             resultado.append((i, diferencia))
     return resultado
+
+
+def confirmar_multiple(
+    tabla: list[list[Fraction]],
+    fila_z: list[NumM],
+    encabezados: list[str],
+    base: list[str],
+) -> bool:
+    """Busca movimiento positivo en la cara óptima, pasando por bases degeneradas.
+
+    Un costo reducido cero es necesario pero no suficiente: su razón mínima
+    puede ser cero. Se exploran las bases de esa misma cara con aritmética exacta
+    hasta hallar un segmento o rayo, o agotar las bases alcanzables.
+    """
+    ceros = [
+        j
+        for j, n in enumerate(encabezados)
+        if n != "b" and not n.startswith("a") and fila_z[j].es_cero()
+    ]
+    inicial = [encabezados.index(n) for n in base]
+    pendientes = [(tabla, inicial)]
+    vistas = {frozenset(inicial)}
+    while pendientes:
+        actual, basicas = pendientes.pop()
+        for col in ceros:
+            if col in basicas:
+                continue
+            razones = [(r[-1] / r[col], i) for i, r in enumerate(actual) if r[col] > 0]
+            if not razones or min(razones)[0] > 0:
+                return True
+            for razon, fila in razones:
+                if razon != 0:
+                    continue
+                nueva_base = basicas[:]
+                nueva_base[fila] = col
+                clave = frozenset(nueva_base)
+                if clave in vistas:
+                    continue
+                vistas.add(clave)
+                pivote = actual[fila][col]
+                pivoteada = [v / pivote for v in actual[fila]]
+                nueva = [
+                    (
+                        pivoteada
+                        if i == fila
+                        else [a - r[col] * b for a, b in zip(r, pivoteada)]
+                    )
+                    for i, r in enumerate(actual)
+                ]
+                pendientes.append((nueva, nueva_base))
+    return False
