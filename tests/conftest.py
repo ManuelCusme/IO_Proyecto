@@ -19,6 +19,7 @@ def qapp(tmp_path_factory: pytest.TempPathFactory) -> QApplication:
         str(tmp_path_factory.mktemp("settings")),
     )
     app = QApplication.instance() or QApplication([])
+    app.setQuitOnLastWindowClosed(False)
     yield app
 
 

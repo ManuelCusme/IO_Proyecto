@@ -5,7 +5,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QAction, QActionGroup, QUndoCommand, QUndoStack
+from PySide6.QtGui import QAction, QActionGroup, QCloseEvent, QUndoCommand, QUndoStack
 from PySide6.QtWidgets import (
     QDialog,
     QFileDialog,
@@ -27,8 +27,11 @@ from core.ejemplos import EJEMPLOS
 from core.graphic_solver import resolver_grafico
 from core.models import Problema, Restriccion, ResultadoSimplex
 from core.parser import parsear_problema
+from core.parser_ia import AVISO_REVISION
 from core.report import exportar_excel, exportar_latex, exportar_pdf
 from core.simplex_solver import ErrorInterno, resolver_simplex
+from gui.ai_panel import AIPanel
+from gui.ai_settings_dialog import AISettingsDialog
 from gui.graphic_view import GraphicView
 from gui.problem_panel import ProblemPanel
 from gui.resultado_panel import ResultadoPanel
@@ -67,6 +70,10 @@ class MainWindow(QMainWindow):
         self.resolver_backend = resolver_simplex
         self.metodo = "Automático"
         self.panel = ProblemPanel()
+        self.ai_panel: AIPanel | None = None
+        self.ai_settings: AISettingsDialog | None = None
+        self.panel.ai_boton.show()
+        self.panel.asistente.connect(self.abrir_asistente)
         self.resultado_panel = ResultadoPanel()
         self.stack = QStackedWidget()
         self.stack.addWidget(self.resultado_panel)
@@ -174,6 +181,9 @@ class MainWindow(QMainWindow):
             a.setCheckable(True)
             a.setChecked(nombre == self.metodo)
             self.grupo_metodo.addAction(a)
+        herramientas = self.menuBar().addMenu("Herramientas")
+        self._accion(herramientas, "Configuración de IA", self.configurar_ia)
+        self._accion(herramientas, "Asistente IA", self.abrir_asistente)
         self.menu_ayuda = self.menuBar().addMenu("Ayuda")
         self._accion(
             self.menu_ayuda, "Tutorial", lambda: self.mostrar_ayuda("tutorial"), "F1"
@@ -409,3 +419,47 @@ class MainWindow(QMainWindow):
                     "Exportar",
                     "No se pudo exportar. Revisa la ruta y los permisos del archivo.",
                 )
+
+    def abrir_asistente(self) -> None:
+        """Muestra los dos modos de IA sin iniciar consultas al abrir."""
+        if self.ai_panel is None:
+            self.ai_panel = AIPanel(self)
+            self.ai_panel.problema_cargado.connect(self.cargar_desde_ia)
+        self.ai_panel.actualizar_configuracion()
+        self.ai_panel.show()
+        self.ai_panel.raise_()
+
+    def cargar_desde_ia(self, problema: Problema, leyenda: list[str]) -> None:
+        """Carga datos y aviso de revisión sin ejecutar el solver."""
+        self.panel.cargar_problema(problema)
+        self.panel.aviso.setText("\n".join(leyenda + [AVISO_REVISION]))
+        self.statusBar().showMessage("Datos de IA cargados: revisa antes de resolver.")
+
+    def configurar_ia(self) -> None:
+        """Abre configuración local con prueba de conexión explícita."""
+        if self.ai_settings is None:
+            self.ai_settings = AISettingsDialog(self)
+            self.ai_settings.accepted.connect(self._configuracion_actualizada)
+        self.ai_settings.show()
+
+    def _configuracion_actualizada(self) -> None:
+        if self.ai_panel is not None:
+            self.ai_panel.actualizar_configuracion()
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        """Cancela conexiones pendientes antes de permitir destruir sus hilos."""
+        activos = [
+            d
+            for d in (self.ai_panel, self.ai_settings)
+            if d is not None and d.trabajo is not None
+        ]
+        if activos:
+            for d in activos:
+                d.cancelar()
+            self.statusBar().showMessage(
+                "Cancelando consultas. Espera a que terminen para cerrar."
+            )
+            event.ignore()
+        else:
+            self.simplex_view.barra.timer.stop()
+            super().closeEvent(event)
