@@ -49,3 +49,11 @@
 - Columna azul, fila verde y pivote amarillo en negrita; narrativa y operaciones.
 - Anterior/siguiente, reproducción a 1,5 segundos y atajos contextuales.
 - Puerta: 388 tests, navegación de Wyndor con colores y negrita; black y ruff correctos.
+
+## Fase 6 — Vista gráfica
+
+- Canvas Matplotlib y toolbar para zoom, desplazamiento y guardado de imagen.
+- Rectas etiquetadas, región sombreada, vértices azules con fracciones y Z.
+- Óptimos rojos, segmentos múltiples y tooltip de vértices.
+- Desactivación explícita para dimensiones distintas de dos y selección de método.
+- Puerta: 390 tests, cinco vértices y un óptimo en Wyndor; black y ruff correctos.
