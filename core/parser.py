@@ -101,7 +101,8 @@ def parsear_problema(texto: str) -> Problema:
                 partes.append(_expresion(fragmento))
             except (ValueError, ZeroDivisionError):
                 raise ParseError(
-                    f"Restricción #{numero}: no se pudo interpretar '{fragmento.strip()}'."
+                    f"Restricción #{numero}: no se pudo interpretar "
+                    f"'{fragmento.strip()}'."
                 ) from None
         (izquierda, ci), (derecha, cd) = partes
         variables = dict(izquierda)

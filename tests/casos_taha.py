@@ -28,7 +28,7 @@ CASOS = [
 
 
 def aleatorios(cantidad: int = 240) -> list[Problema]:
-    """Genera restricciones mixtas, RHS de ambos signos y objetivos de ambos sentidos."""
+    """Genera PL mixtas reproducibles con RHS y objetivos de ambos signos."""
     rng = random.Random(1052026)
     problemas = []
     for _ in range(cantidad):

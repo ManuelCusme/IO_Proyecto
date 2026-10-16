@@ -199,7 +199,8 @@ class ProblemPanel(QWidget):
             except (ValueError, ZeroDivisionError):
                 campo.setStyleSheet("background: #FFCDD2; color: #212121")
                 campo.setToolTip(
-                    "Introduce un entero, decimal o fracción con denominador distinto de cero."
+                    "Introduce un entero, decimal o fracción con "
+                    "denominador distinto de cero."
                 )
                 valido = False
 
@@ -215,7 +216,8 @@ class ProblemPanel(QWidget):
                     if item:
                         item.setBackground(QColor("#FFCDD2"))
                         item.setToolTip(
-                            "Introduce un entero, decimal o fracción con denominador distinto de cero."
+                            "Introduce un entero, decimal o fracción "
+                            "con denominador distinto de cero."
                         )
         valido = valido and self.tabla.rowCount() > 0
         self.resolver_boton.setEnabled(valido)

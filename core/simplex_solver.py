@@ -116,7 +116,10 @@ def resolver_simplex(problema: Problema) -> ResultadoSimplex:
         elif col is not None:
             if detectar_no_acotado([r[col] for r in tabla]):
                 estado = "no_acotado"
-                mensaje = "Problema no acotado: no existe razón admisible en la columna pivote."
+                mensaje = (
+                    "Problema no acotado: no existe razón admisible en "
+                    "la columna pivote."
+                )
             else:
                 menor = min(r for r in razones if r is not None)
                 empatadas = [i for i, r in enumerate(razones) if r == menor]
@@ -126,7 +129,8 @@ def resolver_simplex(problema: Problema) -> ResultadoSimplex:
                 if detectar_empate_razon(razones):
                     degenerado = True
                     advertencias.append(
-                        "Empate en la razón mínima: la siguiente solución será degenerada"
+                        "Empate en la razón mínima: la siguiente "
+                        "solución será degenerada"
                     )
                 pivote = tabla[fila][col]
                 operaciones.append(f"F{fila+1} ← F{fila+1} / ({pivote})")
@@ -139,8 +143,10 @@ def resolver_simplex(problema: Problema) -> ResultadoSimplex:
                     "más negativo" if problema.sentido == "max" else "más positivo"
                 )
                 mensaje = (
-                    f"Paso {numero}: Entra {nombres[col]} (Zj − Cj = {fila_z[col]}, el {criterio}). "
-                    f"Sale {base[fila]} (menor razón: {tabla[fila][-1]}/{pivote} = {menor}). "
+                    f"Paso {numero}: Entra {nombres[col]} (Zj − Cj = "
+                    f"{fila_z[col]}, el {criterio}). "
+                    f"Sale {base[fila]} (menor razón: "
+                    f"{tabla[fila][-1]}/{pivote} = {menor}). "
                     f"Elemento pivote: {pivote}."
                 )
                 if base[fila].startswith("a"):
@@ -202,7 +208,8 @@ def resolver_simplex(problema: Problema) -> ResultadoSimplex:
             )
         if numero == MAX_ITER:
             raise ErrorInterno(
-                f"Se alcanzó el límite de {MAX_ITER} iteraciones. Revise el problema; posible ciclado."
+                f"Se alcanzó el límite de {MAX_ITER} iteraciones. "
+                f"Revise el problema; posible ciclado."
             )
         saliente = base[fila]
         pivote = tabla[fila][col]

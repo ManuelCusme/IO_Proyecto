@@ -59,12 +59,14 @@ class AISettingsDialog(DialogoConTrabajo):
         layout.addWidget(QLabel("Modelo"))
         layout.addWidget(self.modelo)
         aviso = QLabel(
-            "La clave se guarda sin cifrar en este equipo mediante QSettings. También puedes usar GEMINI_API_KEY."
+            "La clave se guarda sin cifrar en este equipo mediante "
+            "QSettings. También puedes usar GEMINI_API_KEY."
         )
         aviso.setWordWrap(True)
         layout.addWidget(aviso)
         enlace = QLabel(
-            '<a href="https://aistudio.google.com/apikey">Obtener una clave gratuita en Google AI Studio</a>'
+            '<a href="https://aistudio.google.com/apikey">Obtener '
+            "una clave gratuita en Google AI Studio</a>"
         )
         enlace.setOpenExternalLinks(True)
         layout.addWidget(enlace)

@@ -294,7 +294,8 @@ class MainWindow(QMainWindow):
                 (
                     str(error)
                     if isinstance(error, (ValueError, ErrorInterno))
-                    else "No se pudo completar la resolución. Revisa los datos del problema."
+                    else "No se pudo completar la resolución. Revisa los "
+                    "datos del problema."
                 ),
             )
 

@@ -23,7 +23,10 @@ def test_ejemplos(texto: str, referencia: tuple) -> None:
 )
 def test_variantes(marcador: str) -> None:
     """Acepta decimales, fracciones, comentarios y no negatividad explícita."""
-    texto = f"# x = mesas\nMAXIMIZAR Z = 0.5x + 3/2*y - z\n{marcador}\nx+y ≤ 4\n2*x == z+3\nx, y, z >= 0\nx >= 0"
+    texto = (
+        f"# x = mesas\nMAXIMIZAR Z = 0.5x + 3/2*y - z\n{marcador}\nx+y ≤ "
+        f"4\n2*x == z+3\nx, y, z >= 0\nx >= 0"
+    )
     p = parsear_problema(texto)
     assert p.coef_obj == [F(1, 2), F(3, 2), -1]
     assert p.restricciones[1].coefs == [2, 0, -1]

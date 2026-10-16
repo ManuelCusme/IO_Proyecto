@@ -62,7 +62,9 @@ class AIPanel(DialogoConTrabajo):
         self.cargar.clicked.connect(self.cargar_respuesta)
         lm.addWidget(self.cargar)
         privacidad = QLabel(
-            "El enunciado se envía a Google. No incluyas datos personales. En la capa gratuita, Google puede usar los datos enviados para mejorar sus productos."
+            "El enunciado se envía a Google. No incluyas datos "
+            "personales. En la capa gratuita, Google puede usar los "
+            "datos enviados para mejorar sus productos."
         )
         privacidad.setWordWrap(True)
         la.addWidget(privacidad)
@@ -97,7 +99,8 @@ class AIPanel(DialogoConTrabajo):
         self.analizar.setToolTip(
             "Analiza el enunciado sin resolverlo."
             if clave
-            else "No hay clave configurada. Usa el modo A o Herramientas → Configuración de IA."
+            else "No hay clave configurada. Usa el modo A o Herramientas "
+            "→ Configuración de IA."
         )
 
     def copiar_prompt(self) -> None:
@@ -151,5 +154,6 @@ class AIPanel(DialogoConTrabajo):
         self.cancelar()
         self.cancelar_boton.setEnabled(False)
         self.mensaje.setText(
-            "Consulta cancelada. Se descartará la respuesta; el modo manual sigue disponible."
+            "Consulta cancelada. Se descartará la respuesta; el modo "
+            "manual sigue disponible."
         )

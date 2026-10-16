@@ -30,7 +30,8 @@ class TrabajoIA(QThread):
                 self.error.emit(
                     str(error)
                     if isinstance(error, ErrorIA)
-                    else "No se pudo interpretar la respuesta. Revisa el enunciado o usa el modo manual (A)."
+                    else "No se pudo interpretar la respuesta. Revisa el "
+                    "enunciado o usa el modo manual (A)."
                 )
 
 

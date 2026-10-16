@@ -9,14 +9,38 @@ import urllib.request
 from core.models import Problema
 from core.parser import ParseError, extraer_leyenda, parsear_problema
 
-PROMPT_EXTRACCION = "Eres un asistente que convierte enunciados de Programación Lineal a un formato fijo.\nLee el enunciado y responde ÚNICAMENTE con un bloque de texto, sin explicaciones,\nsin markdown y sin comillas, con exactamente este formato:\n\n# x1 = <qué representa x1>\n# x2 = <qué representa x2>\nmax <función objetivo>        (o: min <función objetivo>)\ns.a.\n<restricción 1>\n<restricción 2>\n\nReglas:\n1. Variables llamadas x1, x2, x3... en el orden en que se definen en el enunciado.\n2. Operadores permitidos: <=, >=, =.\n3. Coeficientes numéricos (enteros, decimales o fracciones a/b), sin unidades ni texto.\n4. No incluyas restricciones de no negatividad (x1, x2 >= 0).\n5. Si hay unidades distintas (horas y minutos, kg y g), conviértelo todo a una misma unidad.\n6. Si el enunciado no es un problema de programación lineal o es ambiguo, responde\n   exactamente: NO_ES_PL\n\nEnunciado:\n{enunciado}"
+PROMPT_EXTRACCION = (
+    "Eres un asistente que convierte enunciados de Programación Lineal a "
+    "un formato fijo.\nLee el enunciado y responde ÚNICAMENTE con un "
+    "bloque de texto, sin explicaciones,\nsin markdown y sin comillas, "
+    "con exactamente este formato:\n\n# x1 = <qué representa x1>\n# x2 = "
+    "<qué representa x2>\nmax <función objetivo>        (o: min <función "
+    "objetivo>)\ns.a.\n<restricción 1>\n<restricción 2>\n\nReglas:\n1. "
+    "Variables llamadas x1, x2, x3... en el orden en que se definen en "
+    "el enunciado.\n2. Operadores permitidos: <=, >=, =.\n3. Coeficientes "
+    "numéricos (enteros, decimales o fracciones a/b), sin unidades ni "
+    "texto.\n4. No incluyas restricciones de no negatividad (x1, x2 >= "
+    "0).\n5. Si hay unidades distintas (horas y minutos, kg y g), "
+    "conviértelo todo a una misma unidad.\n6. Si el enunciado no es un "
+    "problema de programación lineal o es ambiguo, responde\n   "
+    "exactamente: NO_ES_PL\n\nEnunciado:\n{enunciado}"
+)
 MODELO_PREDETERMINADO = "gemini-flash-lite-latest"
-AVISO_REVISION = "Revisa los datos antes de resolver: la IA puede equivocarse al interpretar el enunciado."
-ERROR_NO_PL = "La IA no reconoció un problema de programación lineal en el texto. Revisa el enunciado."
+AVISO_REVISION = (
+    "Revisa los datos antes de resolver: la IA puede equivocarse al "
+    "interpretar el enunciado."
+)
+ERROR_NO_PL = (
+    "La IA no reconoció un problema de programación lineal en el texto. "
+    "Revisa el enunciado."
+)
 ERROR_RED = (
     "No se pudo conectar con Gemini. Revisa tu internet o usa el modo manual (A)."
 )
-ERROR_RESPUESTA = "La respuesta de Gemini no contiene un problema válido. Revisa el enunciado o usa el modo manual (A)."
+ERROR_RESPUESTA = (
+    "La respuesta de Gemini no contiene un problema válido. Revisa el "
+    "enunciado o usa el modo manual (A)."
+)
 
 
 class ErrorIA(Exception):
@@ -83,15 +107,21 @@ class ClienteGemini:
             return contenido
         except urllib.error.HTTPError as error:
             mensajes = {
-                400: "La clave de API no es válida o no tiene permiso. Revísala en Configuración de IA.",
-                403: "La clave de API no es válida o no tiene permiso. Revísala en Configuración de IA.",
-                404: "El modelo configurado no existe o fue retirado. Usa «Probar conexión» y elige otro en Configuración de IA.",
-                429: "Se agotó la cuota gratuita (por minuto o por día). Espera un momento o usa el modo manual (A).",
+                400: "La clave de API no es válida o no tiene permiso. "
+                "Revísala en Configuración de IA.",
+                403: "La clave de API no es válida o no tiene permiso. "
+                "Revísala en Configuración de IA.",
+                404: "El modelo configurado no existe o fue retirado. Usa "
+                "«Probar conexión» y elige otro en Configuración de "
+                "IA.",
+                429: "Se agotó la cuota gratuita (por minuto o por día). "
+                "Espera un momento o usa el modo manual (A).",
             }
             raise ErrorIA(
                 mensajes.get(
                     error.code,
-                    "Gemini no está disponible ahora mismo. Intenta más tarde o usa el modo manual (A).",
+                    "Gemini no está disponible ahora mismo. Intenta "
+                    "más tarde o usa el modo manual (A).",
                 )
             ) from None
         except (urllib.error.URLError, TimeoutError, socket.timeout, OSError):
