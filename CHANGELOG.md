@@ -42,3 +42,10 @@
 - Navegación temporizada reutilizable y punto de entrada con manejo amigable de errores.
 - Puerta: 387 tests; siete ejemplos resueltos desde la ventana offscreen;
   edición, historial y archivos verificados; black y ruff correctos.
+
+## Fase 5 — Vista Simplex
+
+- Tablas con Cj, Base, Cb, razones y Zj − Cj; M simbólica y fracciones exactas.
+- Columna azul, fila verde y pivote amarillo en negrita; narrativa y operaciones.
+- Anterior/siguiente, reproducción a 1,5 segundos y atajos contextuales.
+- Puerta: 388 tests, navegación de Wyndor con colores y negrita; black y ruff correctos.
