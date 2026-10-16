@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
     QDialog,
     QFileDialog,
     QHBoxLayout,
+    QLabel,
     QListWidget,
     QMainWindow,
     QMessageBox,
@@ -21,9 +22,11 @@ from PySide6.QtWidgets import (
 )
 
 from core.ejemplos import EJEMPLOS
+from core.graphic_solver import resolver_grafico
 from core.models import Problema, Restriccion, ResultadoSimplex
 from core.parser import parsear_problema
 from core.simplex_solver import ErrorInterno, resolver_simplex
+from gui.graphic_view import GraphicView
 from gui.problem_panel import ProblemPanel
 from gui.resultado_panel import ResultadoPanel
 from gui.simplex_view import SimplexView
@@ -65,6 +68,8 @@ class MainWindow(QMainWindow):
         self.stack.addWidget(self.resultado_panel)
         self.simplex_view = SimplexView()
         self.stack.addWidget(self.simplex_view)
+        self.graphic_view = GraphicView()
+        self.stack.addWidget(self.graphic_view)
         derecho = QWidget()
         ld = QVBoxLayout(derecho)
         self.selector = QHBoxLayout()
@@ -78,7 +83,15 @@ class MainWindow(QMainWindow):
             lambda: self.stack.setCurrentWidget(self.simplex_view)
         )
         self.selector.addWidget(self.boton_simplex)
+        self.boton_grafico = QPushButton("Gráfico")
+        self.boton_grafico.clicked.connect(
+            lambda: self.stack.setCurrentWidget(self.graphic_view)
+        )
+        self.selector.addWidget(self.boton_grafico)
         ld.addLayout(self.selector)
+        self.mensaje_grafico = QLabel()
+        self.mensaje_grafico.setWordWrap(True)
+        ld.addWidget(self.mensaje_grafico)
         ld.addWidget(self.stack)
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
@@ -95,6 +108,8 @@ class MainWindow(QMainWindow):
         self.panel.resolver.connect(self.on_resolve_clicked)
         self.panel.ejemplos.connect(self.cargar_ejemplo)
         self._menus()
+        self.panel.estado_cambiado.connect(self._actualizar_metodos)
+        self._actualizar_metodos()
         self.statusBar().showMessage("Listo")
 
     def _accion(
@@ -133,6 +148,11 @@ class MainWindow(QMainWindow):
             "Vista Simplex",
             lambda: self.stack.setCurrentWidget(self.simplex_view),
         )
+        self.accion_grafico = self._accion(
+            self.menu_ver,
+            "Vista gráfica",
+            lambda: self.stack.setCurrentWidget(self.graphic_view),
+        )
         self.oscuro = self._accion(self.menu_ver, "Modo oscuro", self._oscuro)
         self.oscuro.setCheckable(True)
         metodo = self.menuBar().addMenu("Método")
@@ -149,7 +169,23 @@ class MainWindow(QMainWindow):
 
     def _metodo(self, nombre: str) -> None:
         self.metodo = nombre
+        self._actualizar_metodos()
         self.statusBar().showMessage(f"Método: {nombre}")
+
+    def _actualizar_metodos(self) -> None:
+        aplica = self.panel.numero_variables.value() == 2
+        grafico = aplica and self.metodo != "Solo Simplex"
+        self.boton_grafico.setEnabled(grafico)
+        self.graphic_view.setEnabled(grafico)
+        self.accion_grafico.setEnabled(grafico)
+        self.boton_simplex.setEnabled(self.metodo != "Solo gráfico")
+        mensaje = (
+            "El método gráfico solo aplica a problemas de 2 variables."
+            if not aplica
+            else ""
+        )
+        self.mensaje_grafico.setText(mensaje)
+        self.boton_grafico.setToolTip(mensaje or "Resultado final por método gráfico.")
 
     def _oscuro(self, activo: bool) -> None:
         self.setStyleSheet(
@@ -183,10 +219,15 @@ class MainWindow(QMainWindow):
             self.problema, self.resultado = p, r
             self.resultado_panel.mostrar(r)
             self.simplex_view.cargar(r)
+            self._actualizar_metodos()
+            if len(p.nombres) == 2 and self.metodo != "Solo Simplex":
+                self.graphic_view.dibujar(resolver_grafico(p))
             self.stack.setCurrentWidget(
                 self.simplex_view
                 if self.metodo != "Solo gráfico"
-                else self.resultado_panel
+                else (
+                    self.graphic_view if len(p.nombres) == 2 else self.resultado_panel
+                )
             )
             self.statusBar().showMessage(
                 {
