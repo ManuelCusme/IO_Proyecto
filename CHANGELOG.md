@@ -12,3 +12,11 @@
 - NumM inmutable con orden lexicográfico, operaciones y formato simbólico.
 - Dataclasses de problemas, restricciones, pasos y resultados.
 - Puerta de calidad: 17 tests; black y ruff sin errores.
+
+## Fase 1B — Simplex Gran M
+
+- Convención Zj − Cj, minimización directa y M simbólica.
+- Tablas completas, operaciones narradas, Bland en empates y eliminación de artificiales.
+- Casos especiales separados y demo de consola compatible con Windows.
+- Puerta: 268 tests; 7 ejemplos y 240 aleatorios contra SciPy; tablas Taha exactas;
+  enumeración independiente de vértices 2D; demo, black y ruff correctos.
