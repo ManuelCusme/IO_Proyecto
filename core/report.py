@@ -4,8 +4,9 @@ from fractions import Fraction
 from html import escape
 from pathlib import Path
 
-from core.models import PasoSimplex, Problema, ResultadoSimplex
+from core.models import PasoSimplex, Problema, ResultadoGrafico, ResultadoSimplex
 from core.numeros import NumM
+from core.resultados import resumir_resultado
 from utils.paleta import COLOR_COLUMNA, COLOR_FILA, COLOR_PIVOTE, COLOR_Z
 
 
@@ -56,11 +57,25 @@ def _enunciado(p: Problema) -> list[str]:
 
 def construir_html(
     problema: Problema,
-    resultado: ResultadoSimplex,
+    resultado: ResultadoSimplex | ResultadoGrafico,
     imagen_grafico: Path | None = None,
-    metodo: str = "Simplex Gran M",
+    metodo: str | None = None,
 ) -> str:
     """Compone un informe con problema, tablas marcadas, operaciones y solución."""
+    metodo = metodo or (
+        "Método gráfico"
+        if isinstance(resultado, ResultadoGrafico)
+        else "Simplex Gran M"
+    )
+    resultado = resumir_resultado(problema, resultado)
+    iteraciones = (
+        resultado.iteraciones if resultado.iteraciones is not None else "No aplica"
+    )
+    degeneracion = (
+        "No aplica"
+        if resultado.degenerado is None
+        else "sí" if resultado.degenerado else "no"
+    )
     partes = [
         "<html><head><meta charset='utf-8'></head><body>",
         "<h1>SimplexLab</h1>",
@@ -99,10 +114,7 @@ def construir_html(
             + "; ".join(escape(f"{n} = {v}") for n, v in resultado.solucion.items())
             + "</p>"
         )
-    partes.append(
-        f"<p>Iteraciones: {len(resultado.pasos)-1}. Degenerado: "
-        f"{'sí' if resultado.degenerado else 'no'}.</p>"
-    )
+    partes.append(f"<p>Iteraciones: {iteraciones}. Degenerado: {degeneracion}.</p>")
     partes.extend(f"<p>{escape(a)}</p>" for a in resultado.advertencias)
     if imagen_grafico:
         partes.append(
@@ -115,10 +127,10 @@ def construir_html(
 
 def exportar_pdf(
     problema: Problema,
-    resultado: ResultadoSimplex,
+    resultado: ResultadoSimplex | ResultadoGrafico,
     ruta: Path,
     imagen_grafico: Path | None = None,
-    metodo: str = "Simplex Gran M",
+    metodo: str | None = None,
 ) -> None:
     """Imprime el informe mediante QTextDocument y QPrinter.
 
@@ -183,8 +195,11 @@ def _latex_numero(valor: Fraction | NumM) -> str:
     )
 
 
-def exportar_latex(problema: Problema, resultado: ResultadoSimplex, ruta: Path) -> None:
+def exportar_latex(
+    problema: Problema, resultado: ResultadoSimplex | ResultadoGrafico, ruta: Path
+) -> None:
     """Genera un documento compilable con amsmath, fracciones y tablas."""
+    resultado = resumir_resultado(problema, resultado)
     partes = [
         r"\documentclass{article}",
         r"\usepackage[utf8]{inputenc}",
@@ -235,12 +250,15 @@ def exportar_latex(problema: Problema, resultado: ResultadoSimplex, ruta: Path) 
     ruta.write_text("\n".join(partes), encoding="utf-8")
 
 
-def exportar_excel(problema: Problema, resultado: ResultadoSimplex, ruta: Path) -> None:
+def exportar_excel(
+    problema: Problema, resultado: ResultadoSimplex | ResultadoGrafico, ruta: Path
+) -> None:
     """Guarda una hoja por tabla con colores y fracciones como texto exacto."""
     from openpyxl import Workbook
     from openpyxl.styles import Font, PatternFill
     from openpyxl.utils import get_column_letter
 
+    resultado = resumir_resultado(problema, resultado)
     libro = Workbook()
     resumen = libro.active
     resumen.title = "Problema y resultado"
@@ -248,8 +266,22 @@ def exportar_excel(problema: Problema, resultado: ResultadoSimplex, ruta: Path) 
         resumen.append([linea])
     resumen.append(["Estado", resultado.estado])
     resumen.append(["Z*", str(resultado.z) if resultado.z is not None else ""])
-    resumen.append(["Iteraciones", len(resultado.pasos) - 1])
-    resumen.append(["Degenerado", str(resultado.degenerado)])
+    resumen.append(
+        [
+            "Iteraciones",
+            resultado.iteraciones if resultado.iteraciones is not None else "No aplica",
+        ]
+    )
+    resumen.append(
+        [
+            "Degenerado",
+            (
+                str(resultado.degenerado)
+                if resultado.degenerado is not None
+                else "No aplica"
+            ),
+        ]
+    )
     for n, v in (resultado.solucion or {}).items():
         resumen.append([n, str(v)])
     for a in resultado.advertencias:

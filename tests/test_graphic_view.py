@@ -44,3 +44,26 @@ def test_tres_variables(qapp: QApplication) -> None:
     w._metodo("Solo gráfico")
     assert not w.boton_simplex.isEnabled()
     w.close()
+
+
+def test_solo_grafico(qapp: QApplication, tmp_path) -> None:
+    """Solo gráfico nunca invoca Simplex y sus exportaciones omiten tablas."""
+    from core.models import ResultadoGrafico
+
+    w = MainWindow()
+    w.panel.cargar_problema(CASOS[0][0])
+
+    def prohibido(_problema: Problema) -> None:
+        raise AssertionError("Solo gráfico no debe invocar Simplex")
+
+    w.resolver_backend = prohibido
+    w._metodo("Solo gráfico")
+    w.panel.resolver_boton.click()
+    assert isinstance(w.resultado, ResultadoGrafico)
+    assert w.resultado.z_optimo == 36
+    assert "s1 = 2" in w.resultado_panel.texto.toPlainText()
+    assert w.stack.currentWidget() is w.graphic_view
+    w.exportar_a(tmp_path / "grafico.tex", "tex")
+    assert "Tabla 0" not in (tmp_path / "grafico.tex").read_text(encoding="utf-8")
+    w.exportar_a(tmp_path / "grafico.xlsx", "xlsx")
+    w.close()

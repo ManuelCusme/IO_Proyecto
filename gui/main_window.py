@@ -25,7 +25,7 @@ from PySide6.QtWidgets import (
 
 from core.ejemplos import EJEMPLOS
 from core.graphic_solver import resolver_grafico
-from core.models import Problema, Restriccion, ResultadoSimplex
+from core.models import Problema, Restriccion, ResultadoGrafico, ResultadoSimplex
 from core.parser import parsear_problema
 from core.parser_ia import AVISO_REVISION
 from core.report import exportar_excel, exportar_latex, exportar_pdf
@@ -68,7 +68,7 @@ class MainWindow(QMainWindow):
         self._oscuro(False)
         self.dialogos_ayuda: list[QDialog] = []
         self.problema: Problema | None = None
-        self.resultado: ResultadoSimplex | None = None
+        self.resultado: ResultadoSimplex | ResultadoGrafico | None = None
         self.resolver_backend = resolver_simplex
         self.metodo = "Automático"
         self.panel = ProblemPanel()
@@ -266,13 +266,23 @@ class MainWindow(QMainWindow):
         try:
             self.statusBar().showMessage("Resolviendo…")
             p = self.panel.leer_problema()
-            r = self.resolver_backend(p)
+            if self.metodo == "Solo gráfico":
+                if len(p.nombres) != 2:
+                    raise ValueError(
+                        "El método gráfico solo aplica a problemas de 2 variables."
+                    )
+                r = resolver_grafico(p)
+            else:
+                r = self.resolver_backend(p)
             self.problema, self.resultado = p, r
-            self.resultado_panel.mostrar(r)
-            self.simplex_view.cargar(r)
+            self.resultado_panel.mostrar(r, p)
+            if isinstance(r, ResultadoSimplex):
+                self.simplex_view.cargar(r)
             self._actualizar_metodos()
             if len(p.nombres) == 2 and self.metodo != "Solo Simplex":
-                self.graphic_view.dibujar(resolver_grafico(p))
+                self.graphic_view.dibujar(
+                    r if isinstance(r, ResultadoGrafico) else resolver_grafico(p)
+                )
             self.stack.setCurrentWidget(
                 self.simplex_view
                 if self.metodo != "Solo gráfico"
@@ -390,7 +400,13 @@ class MainWindow(QMainWindow):
                     imagen = Path(temporal) / "grafico.png"
                     self.graphic_view.figura.savefig(imagen, dpi=140)
                 metodo = (
-                    "Simplex Gran M y método gráfico" if imagen else "Simplex Gran M"
+                    "Método gráfico"
+                    if isinstance(self.resultado, ResultadoGrafico)
+                    else (
+                        "Simplex Gran M y método gráfico"
+                        if imagen
+                        else "Simplex Gran M"
+                    )
                 )
                 exportar_pdf(self.problema, self.resultado, ruta, imagen, metodo)
         elif tipo == "tex":

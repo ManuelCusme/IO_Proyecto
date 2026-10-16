@@ -2,7 +2,8 @@
 
 from PySide6.QtWidgets import QTextBrowser, QVBoxLayout, QWidget
 
-from core.models import ResultadoSimplex
+from core.models import Problema, ResultadoGrafico, ResultadoSimplex
+from core.resultados import resumir_resultado
 
 
 class ResultadoPanel(QWidget):
@@ -15,8 +16,11 @@ class ResultadoPanel(QWidget):
         layout.addWidget(self.texto)
         self.texto.setPlainText("Introduce o carga un problema y pulsa Resolver.")
 
-    def mostrar(self, resultado: ResultadoSimplex) -> None:
+    def mostrar(
+        self, resultado: ResultadoSimplex | ResultadoGrafico, problema: Problema
+    ) -> None:
         """Representa fracciones sin conversiones decimales."""
+        resultado = resumir_resultado(problema, resultado)
         estados = {
             "optimo": "Óptimo único",
             "multiple": "Óptimo múltiple",
@@ -30,7 +34,11 @@ class ResultadoPanel(QWidget):
         if resultado.z is not None:
             lineas.append(f"Z* = {resultado.z}")
             lineas.extend(f"{n} = {v}" for n, v in resultado.solucion.items())
-        lineas.append(f"Iteraciones: {len(resultado.pasos)-1}")
+        lineas.append(
+            f"Iteraciones: {resultado.iteraciones}"
+            if resultado.iteraciones is not None
+            else "Método gráfico: resultado final sin iteraciones."
+        )
         if resultado.degenerado:
             lineas.append("⚠ Solución degenerada")
         lineas.extend("⚠ " + aviso for aviso in resultado.advertencias)
