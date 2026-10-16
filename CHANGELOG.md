@@ -33,3 +33,12 @@
 - Regex y Fraction para expresiones a ambos lados, formatos alternativos y comentarios.
 - Mensajes de sintaxis en español, leyenda de variables y siete ejemplos precargados.
 - Puerta: 383 tests; ejemplos parseados y resueltos; black y ruff correctos.
+
+## Fase 4 — GUI base
+
+- Formulario dinámico con validación, tooltips y campos exactos.
+- Ventana 1200×800, resultados, historial y archivos locales de problemas.
+- Ejemplos por doble clic, selección de método, tema y barra de estado.
+- Navegación temporizada reutilizable y punto de entrada con manejo amigable de errores.
+- Puerta: 387 tests; siete ejemplos resueltos desde la ventana offscreen;
+  edición, historial y archivos verificados; black y ruff correctos.
