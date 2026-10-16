@@ -20,3 +20,10 @@
 - Casos especiales separados y demo de consola compatible con Windows.
 - Puerta: 268 tests; 7 ejemplos y 240 aleatorios contra SciPy; tablas Taha exactas;
   enumeración independiente de vértices 2D; demo, black y ruff correctos.
+
+## Fase 2 — Núcleo gráfico
+
+- Intersecciones exactas, ejes explícitos y cono de recesión homogéneo.
+- Regiones infinitas con óptimo finito, segmentos y semirrectas óptimas.
+- Recorte solo visual y orden antihorario de vértices.
+- Puerta: 360 tests; Wyndor con origen y cruce aleatorio 2D; black y ruff correctos.
