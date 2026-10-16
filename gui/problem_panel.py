@@ -70,6 +70,7 @@ class ProblemPanel(QWidget):
         layout.addWidget(self.error)
         self.aviso = QLabel()
         self.aviso.setWordWrap(True)
+        self.aviso.setStyleSheet("color: #F57C00")
         layout.addWidget(self.aviso)
         botones = QHBoxLayout()
         self.cargar_ejemplo = QPushButton("Cargar ejemplo")

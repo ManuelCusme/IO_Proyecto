@@ -1,5 +1,7 @@
 """Presentación de resultados y advertencias académicas."""
 
+from html import escape
+
 from PySide6.QtWidgets import QTextBrowser, QVBoxLayout, QWidget
 
 from core.models import Problema, ResultadoGrafico, ResultadoSimplex
@@ -42,4 +44,9 @@ class ResultadoPanel(QWidget):
         if resultado.degenerado:
             lineas.append("⚠ Solución degenerada")
         lineas.extend("⚠ " + aviso for aviso in resultado.advertencias)
-        self.texto.setPlainText("\n".join(lineas))
+        color = "#2E7D32" if resultado.estado in ("optimo", "multiple") else "#C62828"
+        partes = [f"<h2 style='color: {color}'>{escape(lineas[0])}</h2>"]
+        for linea in lineas[1:]:
+            color_linea = "#F57C00" if linea.startswith("⚠") else "#212121"
+            partes.append(f"<p style='color: {color_linea}'>{escape(linea)}</p>")
+        self.texto.setHtml("".join(partes))
