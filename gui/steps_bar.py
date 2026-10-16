@@ -1,6 +1,6 @@
 """Navegación manual y reproducción temporizada de tablas."""
 
-from PySide6.QtCore import QTimer, Signal
+from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QKeySequence, QShortcut
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
 
@@ -34,6 +34,7 @@ class StepsBar(QWidget):
             ("Space", self.alternar),
         ]:
             atajo = QShortcut(QKeySequence(tecla), parent or self)
+            atajo.setContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
             atajo.activated.connect(accion)
             self.atajos.append(atajo)
         self.ir(0)

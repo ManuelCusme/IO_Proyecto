@@ -26,6 +26,7 @@ from core.parser import parsear_problema
 from core.simplex_solver import ErrorInterno, resolver_simplex
 from gui.problem_panel import ProblemPanel
 from gui.resultado_panel import ResultadoPanel
+from gui.simplex_view import SimplexView
 
 
 class _Edicion(QUndoCommand):
@@ -62,6 +63,8 @@ class MainWindow(QMainWindow):
         self.resultado_panel = ResultadoPanel()
         self.stack = QStackedWidget()
         self.stack.addWidget(self.resultado_panel)
+        self.simplex_view = SimplexView()
+        self.stack.addWidget(self.simplex_view)
         derecho = QWidget()
         ld = QVBoxLayout(derecho)
         self.selector = QHBoxLayout()
@@ -70,6 +73,11 @@ class MainWindow(QMainWindow):
             lambda: self.stack.setCurrentWidget(self.resultado_panel)
         )
         self.selector.addWidget(resultado)
+        self.boton_simplex = QPushButton("Simplex")
+        self.boton_simplex.clicked.connect(
+            lambda: self.stack.setCurrentWidget(self.simplex_view)
+        )
+        self.selector.addWidget(self.boton_simplex)
         ld.addLayout(self.selector)
         ld.addWidget(self.stack)
         scroll = QScrollArea()
@@ -120,6 +128,11 @@ class MainWindow(QMainWindow):
             "Resultado",
             lambda: self.stack.setCurrentWidget(self.resultado_panel),
         )
+        self._accion(
+            self.menu_ver,
+            "Vista Simplex",
+            lambda: self.stack.setCurrentWidget(self.simplex_view),
+        )
         self.oscuro = self._accion(self.menu_ver, "Modo oscuro", self._oscuro)
         self.oscuro.setCheckable(True)
         metodo = self.menuBar().addMenu("Método")
@@ -169,7 +182,12 @@ class MainWindow(QMainWindow):
             r = self.resolver_backend(p)
             self.problema, self.resultado = p, r
             self.resultado_panel.mostrar(r)
-            self.stack.setCurrentWidget(self.resultado_panel)
+            self.simplex_view.cargar(r)
+            self.stack.setCurrentWidget(
+                self.simplex_view
+                if self.metodo != "Solo gráfico"
+                else self.resultado_panel
+            )
             self.statusBar().showMessage(
                 {
                     "optimo": "Óptimo alcanzado",
