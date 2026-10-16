@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction, QActionGroup, QUndoCommand, QUndoStack
@@ -26,6 +27,7 @@ from core.ejemplos import EJEMPLOS
 from core.graphic_solver import resolver_grafico
 from core.models import Problema, Restriccion, ResultadoSimplex
 from core.parser import parsear_problema
+from core.report import exportar_excel, exportar_latex, exportar_pdf
 from core.simplex_solver import ErrorInterno, resolver_simplex
 from gui.graphic_view import GraphicView
 from gui.problem_panel import ProblemPanel
@@ -129,6 +131,12 @@ class MainWindow(QMainWindow):
         self._accion(archivo, "Nuevo", self.panel.limpiar_formulario, "Ctrl+N")
         self._accion(archivo, "Abrir", self.abrir, "Ctrl+O")
         self._accion(archivo, "Guardar", self.guardar, "Ctrl+S")
+        for tipo, titulo in (("pdf", "PDF"), ("tex", "LaTeX"), ("xlsx", "Excel")):
+            self._accion(
+                archivo,
+                f"Exportar {titulo}",
+                lambda checked=False, t=tipo: self.exportar(t),
+            )
         self._accion(archivo, "Salir", self.close, "Ctrl+Q")
         self.menu_archivo = archivo
         editar = self.menuBar().addMenu("Editar")
@@ -354,4 +362,50 @@ class MainWindow(QMainWindow):
                     self,
                     "Abrir",
                     "El archivo no contiene un problema válido de SimplexLab.",
+                )
+
+    def exportar_a(self, ruta: Path, tipo: str) -> None:
+        """Exporta el último resultado calculado con su problema original."""
+        if self.resultado is None or self.problema is None:
+            raise ValueError("Resuelve un problema antes de exportar.")
+        if tipo == "pdf":
+            with TemporaryDirectory(prefix="simplexlab-") as temporal:
+                imagen = None
+                if len(self.problema.nombres) == 2 and self.metodo != "Solo Simplex":
+                    self.graphic_view.dibujar(resolver_grafico(self.problema))
+                    imagen = Path(temporal) / "grafico.png"
+                    self.graphic_view.figura.savefig(imagen, dpi=140)
+                metodo = (
+                    "Simplex Gran M y método gráfico" if imagen else "Simplex Gran M"
+                )
+                exportar_pdf(self.problema, self.resultado, ruta, imagen, metodo)
+        elif tipo == "tex":
+            exportar_latex(self.problema, self.resultado, ruta)
+        elif tipo == "xlsx":
+            exportar_excel(self.problema, self.resultado, ruta)
+        else:
+            raise ValueError("Formato de exportación desconocido.")
+
+    def exportar(self, tipo: str) -> None:
+        """Selecciona destino y exporta sin mostrar errores internos."""
+        if self.resultado is None:
+            QMessageBox.information(
+                self, "Exportar", "Resuelve un problema antes de exportar."
+            )
+            return
+        ruta, _ = QFileDialog.getSaveFileName(
+            self, "Exportar resultado", "", f"Archivo (*.{tipo})"
+        )
+        if ruta:
+            try:
+                destino = Path(ruta)
+                if not destino.suffix:
+                    destino = destino.with_suffix("." + tipo)
+                self.exportar_a(destino, tipo)
+                self.statusBar().showMessage("Informe exportado.")
+            except Exception:
+                QMessageBox.warning(
+                    self,
+                    "Exportar",
+                    "No se pudo exportar. Revisa la ruta y los permisos del archivo.",
                 )
