@@ -64,3 +64,18 @@
 - Ayuda local en QTextBrowser y atajo F1.
 - Estilos claro/oscuro, tabla legible y formulario distribuido para diez variables.
 - Puerta: 391 tests, los tres HTML y todos los términos del glosario; black y ruff correctos.
+
+## Fase 8 — Exportación, IA y distribución
+
+- PDF con QTextDocument/QPrinter, tablas y gráfico; LaTeX con amsmath y fracciones;
+  Excel con hojas por paso, colores y datos exactos reabiertos en tests.
+- Asistente manual sin clave; Gemini opcional mediante urllib, modelo configurable,
+  error amigable, un reintento tras error de parser y pruebas sin internet.
+- QSettings local, clave enmascarada, prueba explícita de modelos y privacidad visible.
+- QThread con slots encolados, progreso, cancelación y cierre seguro.
+- Solo gráfico ejecuta exclusivamente su solver; resúmenes y exportadores por método.
+- Regresión matemática de óptimo único degenerado; discrepancia documentada.
+- Tipografía libre portátil para interfaz/PDF y controles de 88 columnas y arquitectura.
+- Configuración PyInstaller y README de instalación, uso y distribución.
+- Puerta final: 426 tests, cobertura de core superior al 97%, black y ruff correctos.
+- Gemini real y compilación de .exe no se ejecutan: no se necesitan para la puerta.
