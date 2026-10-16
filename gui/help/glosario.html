@@ -1,0 +1,26 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Glosario</title></head><body>
+<h1>Glosario de programación lineal</h1><dl>
+<dt>Variable básica</dt><dd>Pertenece a la base actual; su columna es un vector unitario y su valor se lee en RHS.</dd>
+<dt>Variable no básica</dt><dd>No pertenece a la base; vale cero en la solución básica actual.</dd>
+<dt>Holgura</dt><dd>Variable no negativa sumada a una restricción ≤; mide capacidad sin usar.</dd>
+<dt>Exceso</dt><dd>Variable no negativa restada de una restricción ≥; mide cuánto se supera el mínimo.</dd>
+<dt>Artificial</dt><dd>Variable auxiliar que permite una base inicial para ≥ o =. Se penaliza con M.</dd>
+<dt>Pivote</dt><dd>Elemento que se convierte en 1 para introducir una variable en la base.</dd>
+<dt>Fila pivote</dt><dd>Fila con la razón mínima admisible. Su variable básica sale.</dd>
+<dt>Columna pivote</dt><dd>Columna de la variable elegida para entrar según el costo reducido.</dd>
+<dt>Cj</dt><dd>Costo objetivo de la variable de la columna j.</dd>
+<dt>Cb</dt><dd>Costo objetivo de cada variable básica.</dd>
+<dt>Zj</dt><dd>Suma de Cb por los coeficientes de la columna j.</dd>
+<dt>Zj−Cj (Zj − Cj)</dt><dd>Costo reducido con la convención de Taha. Máximo óptimo: todos ≥ 0; mínimo óptimo: todos ≤ 0.</dd>
+<dt>Región factible</dt><dd>Conjunto de puntos que cumplen simultáneamente las restricciones y no negatividad.</dd>
+<dt>Vértice</dt><dd>Punto extremo de la región factible; en 2D se obtiene intersectando sus fronteras.</dd>
+<dt>Óptimo múltiple</dt><dd>Más de una solución factible alcanza el mejor valor de Z; un segmento o semirrecta puede ser óptimo.</dd>
+<dt>No factible</dt><dd>No existe un punto que cumpla todas las restricciones. En Gran M permanece una artificial positiva.</dd>
+<dt>No acotado</dt><dd>Z puede mejorar indefinidamente siguiendo una dirección factible. Una región infinita no implica por sí sola Z no acotado.</dd>
+<dt>Degeneración</dt><dd>Una variable básica vale cero. Es una bandera independiente del estado óptimo.</dd>
+<dt>Restricción no activa</dt><dd>En el óptimo tiene holgura o exceso positivo. No se afirma que sea redundante.</dd>
+<dt>Regla de Bland</dt><dd>Desempata por el menor índice de columna; en salida se compara el índice de la variable básica.</dd>
+<dt>Big-M / Gran M</dt><dd>Penaliza artificiales con −M al maximizar y +M al minimizar. Se compara a·M+b lexicográficamente, sin sustituir M por un número grande.</dd>
+<dt>Razón mínima</dt><dd>Menor b/a entre a positivos de la columna pivote, para conservar factibilidad.</dd>
+<dt>Asistente IA</dt><dd>Traduce un párrafo al formato del parser exacto. Modo A sin clave; modo B Gemini opcional. Puede interpretar mal el enunciado: siempre revisa los datos antes de Resolver.</dd>
+</dl></body></html>

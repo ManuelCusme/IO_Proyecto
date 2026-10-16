@@ -6,6 +6,7 @@ from PySide6.QtCore import Signal
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QComboBox,
+    QGridLayout,
     QHBoxLayout,
     QLabel,
     QLineEdit,
@@ -50,7 +51,7 @@ class ProblemPanel(QWidget):
         self.numero_variables.setToolTip("Número de variables no negativas (1 a 10).")
         layout.addWidget(QLabel("Número de variables"))
         layout.addWidget(self.numero_variables)
-        self.objetivo_layout = QHBoxLayout()
+        self.objetivo_layout = QGridLayout()
         layout.addLayout(self.objetivo_layout)
         self.coeficientes: list[QLineEdit] = []
         self.tabla = QTableWidget()
@@ -109,7 +110,7 @@ class ProblemPanel(QWidget):
         while self.objetivo_layout.count():
             item = self.objetivo_layout.takeAt(0)
             item.widget().deleteLater()
-        self.objetivo_layout.addWidget(QLabel("Z ="))
+        self.objetivo_layout.addWidget(QLabel("Z ="), 0, 0)
         self.coeficientes = []
         for i in range(n):
             campo = QLineEdit("0")
@@ -119,8 +120,10 @@ class ProblemPanel(QWidget):
             )
             campo.textChanged.connect(self._cambio)
             self.coeficientes.append(campo)
-            self.objetivo_layout.addWidget(campo)
-            self.objetivo_layout.addWidget(QLabel(self.nombres[i]))
+            self.objetivo_layout.addWidget(campo, 1 + i // 3, (i % 3) * 2)
+            self.objetivo_layout.addWidget(
+                QLabel(self.nombres[i]), 1 + i // 3, (i % 3) * 2 + 1
+            )
         self.tabla.setRowCount(0)
         self.tabla.setColumnCount(n + 3)
         self.tabla.setHorizontalHeaderLabels(self.nombres + ["≤ / ≥ / =", "RHS", "−"])
@@ -194,7 +197,7 @@ class ProblemPanel(QWidget):
                 campo.setStyleSheet("")
                 campo.setToolTip("Coeficiente exacto: entero, decimal o fracción.")
             except (ValueError, ZeroDivisionError):
-                campo.setStyleSheet("background: #FFCDD2")
+                campo.setStyleSheet("background: #FFCDD2; color: #212121")
                 campo.setToolTip(
                     "Introduce un entero, decimal o fracción con denominador distinto de cero."
                 )

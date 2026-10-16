@@ -17,6 +17,7 @@ from PySide6.QtWidgets import (
     QScrollArea,
     QSplitter,
     QStackedWidget,
+    QTextBrowser,
     QVBoxLayout,
     QWidget,
 )
@@ -39,9 +40,11 @@ class _Edicion(QUndoCommand):
         self._primera = True
 
     def undo(self) -> None:
+        """Restaura la edición anterior."""
         self.ventana.restaurar(self.previo)
 
     def redo(self) -> None:
+        """Reaplica la edición sin reconstruir el campo que se está editando."""
         if self._primera:
             self._primera = False
         else:
@@ -55,9 +58,8 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("SimplexLab")
         self.setMinimumSize(1200, 800)
-        self.setStyleSheet(
-            "QMainWindow {background: #FAFAFA; color: #212121;} QToolTip {color: #212121; background: white;}"
-        )
+        self._oscuro(False)
+        self.dialogos_ayuda: list[QDialog] = []
         self.problema: Problema | None = None
         self.resultado: ResultadoSimplex | None = None
         self.resolver_backend = resolver_simplex
@@ -143,7 +145,7 @@ class MainWindow(QMainWindow):
             "Resultado",
             lambda: self.stack.setCurrentWidget(self.resultado_panel),
         )
-        self._accion(
+        self.accion_simplex = self._accion(
             self.menu_ver,
             "Vista Simplex",
             lambda: self.stack.setCurrentWidget(self.simplex_view),
@@ -165,6 +167,13 @@ class MainWindow(QMainWindow):
             a.setChecked(nombre == self.metodo)
             self.grupo_metodo.addAction(a)
         self.menu_ayuda = self.menuBar().addMenu("Ayuda")
+        self._accion(
+            self.menu_ayuda, "Tutorial", lambda: self.mostrar_ayuda("tutorial"), "F1"
+        )
+        self._accion(
+            self.menu_ayuda, "Glosario", lambda: self.mostrar_ayuda("glosario")
+        )
+        self._accion(self.menu_ayuda, "Acerca de", lambda: self.mostrar_ayuda("sobre"))
         self._accion(self.menu_ayuda, "Cargar ejemplo", self.cargar_ejemplo)
 
     def _metodo(self, nombre: str) -> None:
@@ -179,6 +188,7 @@ class MainWindow(QMainWindow):
         self.graphic_view.setEnabled(grafico)
         self.accion_grafico.setEnabled(grafico)
         self.boton_simplex.setEnabled(self.metodo != "Solo gráfico")
+        self.accion_simplex.setEnabled(self.metodo != "Solo gráfico")
         mensaje = (
             "El método gráfico solo aplica a problemas de 2 variables."
             if not aplica
@@ -188,11 +198,32 @@ class MainWindow(QMainWindow):
         self.boton_grafico.setToolTip(mensaje or "Resultado final por método gráfico.")
 
     def _oscuro(self, activo: bool) -> None:
-        self.setStyleSheet(
-            "QWidget {background: #212121; color: #FAFAFA;} QLineEdit, QTableWidget, QTextBrowser {background: #303030;}"
-            if activo
-            else "QMainWindow {background: #FAFAFA; color: #212121;}"
+        nombre = "dark.qss" if activo else "light.qss"
+        ruta = Path(__file__).resolve().parents[1] / "resources" / "styles" / nombre
+        self.setStyleSheet(ruta.read_text(encoding="utf-8"))
+
+    def mostrar_ayuda(self, nombre: str) -> QDialog:
+        """Abre un documento HTML local en una ventana de ayuda no modal."""
+        if nombre not in ("tutorial", "glosario", "sobre"):
+            raise ValueError("Documento de ayuda desconocido.")
+        dialogo = QDialog(self)
+        dialogo.setWindowTitle(
+            {"tutorial": "Tutorial", "glosario": "Glosario", "sobre": "Acerca de"}[
+                nombre
+            ]
         )
+        layout = QVBoxLayout(dialogo)
+        browser = QTextBrowser()
+        browser.setHtml(
+            (Path(__file__).with_name("help") / f"{nombre}.html").read_text(
+                encoding="utf-8"
+            )
+        )
+        layout.addWidget(browser)
+        dialogo.resize(780, 620)
+        self.dialogos_ayuda.append(dialogo)
+        dialogo.show()
+        return dialogo
 
     def _registrar(self) -> None:
         if self._restaurando:

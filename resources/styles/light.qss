@@ -1,0 +1,6 @@
+QWidget { color: #212121; background-color: #FAFAFA; font-size: 13px; }
+QLineEdit, QSpinBox, QComboBox, QTableWidget, QTextBrowser, QListWidget { background-color: #FFFFFF; }
+QPushButton { padding: 6px; border: 1px solid #CCCCCC; border-radius: 4px; }
+QPushButton:hover { border-color: #1976D2; }
+QPushButton:disabled { color: #888888; background-color: #EEEEEE; }
+QToolTip { color: #212121; background-color: #FFFFFF; }

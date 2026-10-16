@@ -1,0 +1,17 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Tutorial</title></head>
+<body><h1>Aprende con SimplexLab</h1>
+<p>SimplexLab resuelve programación lineal continua con variables no negativas y aritmética exacta. No resuelve programación entera ni variables libres.</p>
+<h2>1. Define el problema</h2><p>Elige Maximizar o Minimizar y el número de variables (1 a 10). Introduce los coeficientes de Z. Los campos admiten enteros, decimales y fracciones como 3/2. Todas las variables son ≥ 0.</p>
+<p>Añade una fila por restricción, elige ≤, ≥ o = e introduce RHS. Elimina filas con −. Los campos inválidos se colorean de rojo y deshabilitan Resolver.</p>
+<p>[Captura: formulario con el ejemplo Wyndor]</p>
+<h2>2. Resuelve y compara</h2><p>Con Cargar ejemplo, haz doble clic en Wyndor y pulsa Resolver: Z* = 36 en (2, 6). En Automático tienes Simplex y gráfico para dos variables. Con otra dimensión solo aplica Simplex. Puedes elegir Solo gráfico o Solo Simplex desde Método.</p>
+<h2>3. Lee cada tabla</h2><p>La fila objetivo usa Zj − Cj: para máximo entra el costo más negativo; para mínimo el más positivo, sin convertir a máximo. Elige la razón b/a mínima entre coeficientes positivos. La columna azul entra, la fila verde sale y el pivote amarillo está en negrita. Lee las operaciones debajo.</p>
+<p>Anterior y Siguiente recorren las tablas. Usa ←, → o Espacio dentro de la vista, o Reproducir (una tabla cada 1,5 s). La M es simbólica; las artificiales cuestan −M en máximo y +M en mínimo, y se eliminan sus columnas al salir de la base.</p>
+<p>La regla de Bland solo deshace empates. Existe una cota de seguridad de 100 iteraciones para detectar posible ciclado y mostrar un error controlado.</p>
+<p>[Captura: tabla con pivote resaltado]</p>
+<h2>4. Interpreta el gráfico</h2><p>Solo se dibuja el primer cuadrante. La región gris cumple todas las restricciones; cada punto azul muestra coordenadas y Z exactos, y el rojo marca el óptimo. Un segmento rojo representa infinitas soluciones óptimas. Una región infinita puede tener óptimo finito; su recorte solo sirve para visualizarla.</p>
+<h2>5. Examina el resultado</h2><p>Revisa estado, Z*, variables originales, holguras, excesos y advertencias. Degeneración no significa infactibilidad. Una restricción no activa tiene holgura o exceso positivo en el óptimo; no significa que sea redundante.</p>
+<h2>6. Guarda y exporta</h2><p>Archivo permite guardar o abrir un problema local. Exporta PDF con tablas y gráfico, LaTeX para informes o Excel con una hoja por paso. Deshacer y Rehacer conservan ediciones del formulario; Nuevo inicia un problema.</p>
+<h2>Asistente IA opcional</h2><p>Solo traduce el enunciado al formulario; nunca calcula ni pulsa Resolver. En el modo A copia el prompt, úsalo en el chat de tu elección y pega la respuesta: no requiere clave ni conexión de la app. El modo B envía el enunciado a Gemini con una clave configurada localmente.</p>
+<p>Revisa siempre los datos antes de resolver. La IA puede equivocarse en textos largos, ambiguos o con cambios de unidades. No incluyas datos personales: en la capa gratuita Google puede usar el texto para mejorar sus productos.</p>
+</body></html>
