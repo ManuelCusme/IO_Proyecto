@@ -1,0 +1,7 @@
+﻿-r requirements.txt
+pytest>=8.0
+pytest-cov>=7.0
+scipy>=1.11
+black>=24.0
+ruff>=0.4
+PyInstaller>=6.0,<7
