@@ -57,3 +57,10 @@
 - Óptimos rojos, segmentos múltiples y tooltip de vértices.
 - Desactivación explícita para dimensiones distintas de dos y selección de método.
 - Puerta: 390 tests, cinco vértices y un óptimo en Wyndor; black y ruff correctos.
+
+## Fase 7 — Ayuda y experiencia de uso
+
+- Tutorial pedagógico, glosario completo y créditos con licencia y bibliografía.
+- Ayuda local en QTextBrowser y atajo F1.
+- Estilos claro/oscuro, tabla legible y formulario distribuido para diez variables.
+- Puerta: 391 tests, los tres HTML y todos los términos del glosario; black y ruff correctos.
