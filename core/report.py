@@ -100,12 +100,15 @@ def construir_html(
             + "</p>"
         )
     partes.append(
-        f"<p>Iteraciones: {len(resultado.pasos)-1}. Degenerado: {'sí' if resultado.degenerado else 'no'}.</p>"
+        f"<p>Iteraciones: {len(resultado.pasos)-1}. Degenerado: "
+        f"{'sí' if resultado.degenerado else 'no'}.</p>"
     )
     partes.extend(f"<p>{escape(a)}</p>" for a in resultado.advertencias)
     if imagen_grafico:
         partes.append(
-            f"<h2 style='page-break-before: always'>Método gráfico</h2><img width='650' src='{escape(imagen_grafico.resolve().as_uri())}'>"
+            f"<h2 style='page-break-before: always'>Método "
+            f"gráfico</h2><img width='650' "
+            f"src='{escape(imagen_grafico.resolve().as_uri())}'>"
         )
     return "".join(partes) + "</body></html>"
 
@@ -123,11 +126,11 @@ def exportar_pdf(
         ValueError: Si no existe una aplicación Qt para imprimir el documento.
     """
     from PySide6.QtGui import QGuiApplication, QPageSize, QTextDocument
-    from PySide6.QtPrintSupport import QPrinter
+    from PySide6.QtPrintSupport import QPrinter, QPrinterInfo
 
     if QGuiApplication.instance() is None:
         raise ValueError("La exportación PDF requiere una aplicación Qt activa.")
-    impresora = QPrinter(QPrinter.PrinterMode.HighResolution)
+    impresora = QPrinter(QPrinterInfo(), QPrinter.PrinterMode.HighResolution)
     impresora.setOutputFormat(QPrinter.OutputFormat.PdfFormat)
     impresora.setOutputFileName(str(ruta))
     impresora.setPageSize(QPageSize(QPageSize.PageSizeId.A4))

@@ -33,3 +33,17 @@ def test_exportadores(qapp: QApplication, tmp_path: Path) -> None:
     assert "#FFE082" in construir_html(p, r)
     assert "FZ" in construir_html(p, r)
     libro.close()
+
+
+def test_pdf_con_grafico(qapp: QApplication, tmp_path: Path) -> None:
+    """La exportación desde la ventana incorpora la imagen del canvas."""
+    from gui.main_window import MainWindow
+
+    ventana = MainWindow()
+    ventana.panel.cargar_problema(CASOS[0][0])
+    ventana.panel.resolver_boton.click()
+    destino = tmp_path / "con-grafico.pdf"
+    ventana.exportar_a(destino, "pdf")
+    assert destino.read_bytes().startswith(b"%PDF")
+    assert destino.stat().st_size > 5000
+    ventana.close()
