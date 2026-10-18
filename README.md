@@ -4,19 +4,118 @@ Aplicación de escritorio académica para programación lineal continua, con
 **método gráfico 2D** y **Simplex Gran M simbólica**. Todas las variables son
 no negativas; los cálculos usan `Fraction` y muestran fracciones exactas.
 
-## Instalar y ejecutar
+## Cómo iniciar el proyecto en Windows, paso a paso
 
-Requiere Python 3.11 o posterior. Desde la raíz de este repositorio:
+Esta guía usa **PowerShell en Windows**, incluida la terminal integrada de
+VS Code. SimplexLab abre una ventana de escritorio; no necesitas un navegador.
+La aplicación funciona sin internet después de instalar las dependencias y no
+requiere ninguna clave de API para resolver problemas.
+
+### Primera instalación
+
+1. **Comprueba que tienes Python 3.11 o posterior.** Abre PowerShell y ejecuta:
+
+   ```powershell
+   py --version
+   ```
+
+   Si el comando no existe o la versión es anterior a 3.11, instala Python para
+   Windows y habilita las opciones del instalador para agregar Python al PATH
+   y el lanzador `py`. Cierra y vuelve a abrir la terminal tras instalarlo.
+
+2. **Entra en la carpeta del proyecto.** En este equipo la ruta es:
+
+   ```powershell
+   cd "C:\Users\Personal\IO_Proyecto"
+   ```
+
+   Si guardaste el proyecto en otra ubicación, sustituye la ruta. En VS Code
+   puedes abrir esta carpeta y seleccionar **Terminal → Nueva terminal**.
+   Verifica que estás en la raíz, donde se encuentran `main.py` y
+   `requirements.txt`:
+
+   ```powershell
+   Get-Item main.py, requirements.txt
+   ```
+
+3. **Crea el entorno virtual**, solo si todavía no existe la carpeta `.venv`:
+
+   ```powershell
+   py -m venv .venv
+   ```
+
+   El entorno usa la versión de Python comprobada en el paso 1 y mantiene las
+   dependencias del proyecto en su propia carpeta.
+
+4. **Instala las dependencias** usando el Python del entorno virtual:
+
+   ```powershell
+   .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+   ```
+
+   Este paso necesita internet. Espera a que termine sin errores antes de seguir.
+
+5. **Inicia SimplexLab**:
+
+   ```powershell
+   .\.venv\Scripts\python.exe main.py
+   ```
+
+   Se abrirá la ventana de la aplicación. Mantén la terminal abierta mientras
+   la usas. Para comprobar su funcionamiento, carga **Wyndor Glass (clásico)**
+   y pulsa **Resolver**: debes obtener `Z* = 36`, `x1 = 2` y `x2 = 6`.
+   Para salir, cierra la ventana.
+
+### Cómo abrirlo las siguientes veces
+
+Abre PowerShell y ejecuta estos dos comandos. No necesitas volver a crear el
+entorno ni instalar las dependencias en cada inicio:
 
 ```powershell
-py -3.11 -m venv .venv
+cd "C:\Users\Personal\IO_Proyecto"
+.\.venv\Scripts\python.exe main.py
+```
+
+### Activación opcional del entorno
+
+Los comandos anteriores funcionan sin activar el entorno. Si prefieres usar
+`python` directamente, activa `.venv` desde la raíz del proyecto:
+
+```powershell
 .\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
 python main.py
 ```
 
-En Linux/macOS se activa con `source .venv/bin/activate`. La aplicación funciona
-sin internet después de instalar dependencias. No requiere ninguna clave.
+Para salir del entorno cuando hayas cerrado la aplicación, ejecuta `deactivate`.
+Si PowerShell bloquea `Activate.ps1` por su política de ejecución, usa el comando
+directo `.\.venv\Scripts\python.exe main.py` de la sección anterior.
+
+### Problemas al iniciar en Windows
+
+- **No se encuentra `.\.venv\Scripts\python.exe`:** comprueba que estás en la
+  carpeta del proyecto y crea el entorno siguiendo el paso 3 si aún no existe.
+- **Aparece `ModuleNotFoundError`:** repite el paso 4 y ejecuta con el Python
+  de `.venv` para usar las dependencias instaladas allí.
+- **Aparece `No Python at ...`:** el entorno apunta a una instalación de Python
+  que ya no existe. Comprueba `py --version` (3.11 o posterior). Desde la raíz
+  del proyecto, renombra el entorno anterior y crea uno nuevo:
+
+  ```powershell
+  Rename-Item -LiteralPath .venv -NewName .venv_anterior
+  py -m venv .venv
+  .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+  .\.venv\Scripts\python.exe main.py
+  ```
+
+  Si ya existe `.venv_anterior`, elige otro nombre para conservarlo.
+- **No se encuentra `main.py`:** vuelve a la raíz con el comando `cd` indicado.
+- **El proceso arranca pero no aparece la ventana después de ejecutar tests:**
+  elimina el modo de pruebas de esa terminal y vuelve a iniciar:
+
+  ```powershell
+  Remove-Item Env:QT_QPA_PLATFORM -ErrorAction SilentlyContinue
+  .\.venv\Scripts\python.exe main.py
+  ```
 
 ## Uso
 
